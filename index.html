@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asana Studio – йога и растяжка</title>
+  <!-- Font Awesome 6 (иконки) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      color: #fff;
+      line-height: 1.5;
+    }
+
+    /* ---------- ШАПКА (прозрачная, меняется при скролле) ---------- */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px 5%;
+      z-index: 1000;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      background-color: transparent;
+    }
+
+    .header.scrolled {
+      background-color: #000;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: white;
+    }
+
+    .logo span {
+      color: #f7b731;
+      font-weight: 300;
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 30px;
+    }
+
+    .nav-menu a {
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      font-size: 18px;
+      transition: color 0.2s;
+      padding: 5px 0;
+      border-bottom: 2px solid transparent;
+    }
+
+    .nav-menu a:hover {
+      border-bottom-color: #f7b731;
+      color: #f7b731;
+    }
+
+    /* Бургер (скрыт на десктопе) */
+    .burger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .burger span {
+      width: 25px;
+      height: 3px;
+      background: white;
+      margin: 3px 0;
+      transition: 0.3s;
+    }
+
+    /* ---------- ГЛАВНАЯ (hero) с отдельным фоном ---------- */
+    .hero {
+      height: 100vh;
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                  url('https://amiel.club/uploads/posts/2023-12/1702921773_amiel-club-p-zal-dlya-yogi-dizain-interera-pinterest-4.jpg') center/cover no-repeat fixed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      padding: 0 20px;
+    }
+
+    .hero-content h1 {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    }
+
+    .hero-content p {
+      font-size: 1.5rem;
+      max-width: 800px;
+      margin: 0 auto 30px;
+    }
+
+    .btn {
+      background: #f7b731;
+      color: #000;
+      padding: 15px 40px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.2rem;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      background: #ffd966;
+      transform: scale(1.05);
+    }
+
+    /* ---------- ОБЩИЙ ФОН ДЛЯ ВСЕХ СЕКЦИЙ, КРОМЕ HERO ---------- */
+    .section {
+      padding: 80px 5%;
+      background: linear-gradient(rgba(30, 30, 30, 0.85), rgba(0, 0, 0, 0.85)),
+                  url('https://media.istockphoto.com/id/2174098265/ru/%D1%84%D0%BE%D1%82%D0%BE/%D1%81%D0%BF%D0%BE%D1%80%D1%82%D0%B8%D0%B2%D0%BD%D1%8B%D0%B5-%D0%B6%D0%B5%D0%BD%D1%89%D0%B8%D0%BD%D1%8B-%D1%80%D0%B0%D1%81%D1%82%D1%8F%D0%B3%D0%B8%D0%B2%D0%B0%D1%8E%D1%82%D1%81%D1%8F-%D0%BD%D0%B0-%D0%B7%D0%B0%D0%BD%D1%8F%D1%82%D0%B8%D1%8F%D1%85-%D0%B9%D0%BE%D0%B3%D0%BE%D0%B9.jpg?s=612x612&w=0&k=20&c=yrsBLhFnxcOEj3T_4Cdm8H9DzYPcmwuQhyxj-W_lGNE=') center/cover fixed;
+      color: white;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .section h2 {
+      text-align: center;
+      font-size: 3rem;
+      margin-bottom: 60px;
+      color: white;
+      position: relative;
+    }
+
+    .section h2::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 4px;
+      background: #f7b731;
+      margin: 15px auto 0;
+    }
+
+    /* ---------- О НАС (текст слева, картинка справа) ---------- */
+    .about .container {
+      display: flex;
+      align-items: center;
+      gap: 50px;
+      flex-wrap: wrap;
+    }
+
+    .about-text {
+      flex: 1 1 300px;
+    }
+
+    .about-text p {
+      font-size: 1.2rem;
+      margin-top: 20px;
+      color: white;
+    }
+
+    .about-image {
+      flex: 1 1 300px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 30px rgba(0,0,0,0.6);
+    }
+
+    .about-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.5s;
+    }
+
+    .about-image img:hover {
+      transform: scale(1.03);
+    }
+
+    /* ---------- НАПРАВЛЕНИЯ (8 карточек) ---------- */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      color: #222;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+    }
+
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .card h3 {
+      font-size: 1.8rem;
+      margin: 15px 20px 10px;
+    }
+
+    .card p {
+      margin: 0 20px 20px;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    /* ---------- ЦЕНЫ (10 карточек, кнопка внизу) ---------- */
+    .prices-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+    }
+
+    .price-card {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 30px 20px 25px;
+      text-align: center;
+      transition: background 0.3s;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .price-card:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .price-card h3 {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+    }
+
+    .price-card .price {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #f7b731;
+      margin: 15px 0;
+    }
+
+    .price-card p {
+      margin: 10px 0;
+      font-size: 1rem;
+      opacity: 0.9;
+      flex-grow: 1;
+    }
+
+    .btn-buy {
+      background: #f7b731;
+      border: none;
+      color: #000;
+      font-weight: 600;
+      padding: 12px 20px;
+      border-radius: 40px;
+      margin-top: 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-size: 1rem;
+      width: 100%;
+      align-self: flex-end;
+    }
+
+    .btn-buy:hover {
+      background: #ffda7a;
+    }
+
+    /* ---------- ТРЕНЕРЫ (8 карточек) ---------- */
+    .trainers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+
+    .trainer-card {
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(5px);
+      border-radius: 15px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.2);
+      text-align: center;
+      padding-bottom: 20px;
+    }
+
+    .trainer-card img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+    }
+
+    .trainer-card h3 {
+      font-size: 1.8rem;
+      margin: 15px 0 5px;
+      color: white;
+    }
+
+    .trainer-card p {
+      padding: 0 15px;
+      color: #ddd;
+    }
+
+    /* ---------- ОНЛАЙН КОНСУЛЬТАЦИЯ (анкета + картинка) ---------- */
+    .consult-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .consult-form {
+      flex: 1 1 300px;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(5px);
+      padding: 40px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .consult-form input,
+    .consult-form textarea {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.9);
+      font-size: 1rem;
+    }
+
+    .consult-form textarea {
+      resize: vertical;
+    }
+
+    .btn-submit {
+      background: #f7b731;
+      color: #000;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 1.2rem;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.3s;
+    }
+
+    .btn-submit:hover {
+      background: #ffda7a;
+    }
+
+    .consult-image {
+      flex: 1 1 300px;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .consult-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 20px;
+    }
+
+    /* ---------- КОНТАКТЫ (текст слева, карта справа) ---------- */
+    .contacts-wrapper {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .contacts-info {
+      flex: 1 1 300px;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(5px);
+      padding: 40px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .contacts-info p {
+      margin: 20px 0;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .contacts-info i {
+      color: #f7b731;
+      width: 25px;
+      font-size: 1.5rem;
+    }
+
+    .social {
+      display: flex;
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .social a {
+      color: white;
+      background: rgba(255,255,255,0.2);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      transition: 0.3s;
+    }
+
+    .social a:hover {
+      background: #f7b731;
+      color: #000;
+      transform: translateY(-5px);
+    }
+
+    .contacts-map {
+      flex: 1 1 300px;
+      height: 400px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    .contacts-map iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* ---------- АДАПТАЦИЯ (мобильные) ---------- */
+    @media (max-width: 900px) {
+      .nav-menu {
+        display: none;
+        position: absolute;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        background: #000;
+        flex-direction: column;
+        align-items: center;
+        padding: 30px 0;
+        gap: 20px;
+        border-top: 1px solid #444;
+      }
+
+      .nav-menu.active {
+        display: flex;
+      }
+
+      .burger {
+        display: flex;
+      }
+
+      .hero-content h1 {
+        font-size: 2.7rem;
+      }
+
+      .section h2 {
+        font-size: 2.5rem;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .hero-content h1 {
+        font-size: 2rem;
+      }
+      .hero-content p {
+        font-size: 1.2rem;
+      }
+    }
+
+    .footer {
+      background: #111;
+      color: #aaa;
+      text-align: center;
+      padding: 30px;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- ШАПКА -->
+  <header class="header" id="header">
+    <nav class="navbar">
+      <div class="logo">Asana<span>Studio</span></div>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="#home">Главная</a></li>
+        <li><a href="#about">О нас</a></li>
+        <li><a href="#prices">Прайс</a></li>
+        <li><a href="#trainers">Тренеры</a></li>
+        <li><a href="#consult">Запись</a></li>
+        <li><a href="#contacts">Контакты</a></li>
+      </ul>
+      <div class="burger" id="burger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ГЛАВНАЯ -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <h1>Добро пожаловать в Asana Studio</h1>
+      <p>Пространство гармонии тела и души. Занятия йогой и растяжкой для любого уровня подготовки.</p>
+      <a href="#consult" class="btn">Записаться</a>
+    </div>
+  </section>
+
+  <!-- О НАС -->
+  <section class="section about" id="about">
+    <div class="container">
+      <div class="about-text">
+        <h2>О нашей студии</h2>
+        <p>Asana Studio — это уютное пространство в центре города, где опытные преподаватели помогут вам обрести баланс, гибкость и внутреннюю гармонию. Мы объединяем классическую йогу, современные методики растяжки и дыхательные практики.</p>
+        <p>Занятия проходят в малых группах до 8 человек, что позволяет уделить внимание каждому. В студии есть всё необходимое оборудование: коврики, блоки, ремни и болстеры.</p>
+      </div>
+      <div class="about-image">
+        <img src="https://media.istockphoto.com/id/1459538299/ru/%D1%84%D0%BE%D1%82%D0%BE/%D0%B6%D0%B5%D0%BD%D1%89%D0%B8%D0%BD%D0%B0-%D1%80%D1%83%D0%BA%D0%B8-%D0%B8%D0%BB%D0%B8-%D0%BB%D0%BE%D1%82%D0%BE%D1%81-%D0%BF%D0%BE%D0%B7%D0%B8%D1%80%D1%83%D1%8E%D1%82-%D0%BC%D0%B5%D0%B4%D0%B8%D1%82%D0%B0%D1%86%D0%B8%D0%B5%D0%B9-%D0%BD%D0%B0-%D0%BF%D0%BB%D1%8F%D0%B6%D0%B5-%D0%B7%D0%B0%D0%BA%D0%B0%D1%82%D0%B0-%D0%BE%D0%BA%D0%B5%D0%B0%D0%BD%D0%B5-%D0%B8%D0%BB%D0%B8-%D0%BC%D0%BE%D1%80%D0%B5-%D0%B2-%D0%BF%D1%81%D0%B8%D1%85%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%BE%D0%BC.jpg?s=612x612&w=0&k=20&c=6x5wU9iBIpsGtsw7gvfzgfUojt9I_oKRBRXleq2azxg=" alt="Интерьер студии">
+      </div>
+    </div>
+  </section>
+
+  <!-- НАПРАВЛЕНИЯ (8 штук) -->
+  <section class="section directions" id="directions">
+    <div class="container">
+      <h2>Направления</h2>
+      <div class="cards-grid">
+        <div class="card">
+          <img src="https://static.tildacdn.com/tild3732-3639-4638-b438-656462356431/young-woman-bakasana.png" alt="Хатха-йога">
+          <h3>Хатха-йога</h3>
+          <p>Классическая йога с акцентом на асаны и дыхание. Подходит для новичков.</p>
+        </div>
+        <div class="card">
+          <img src="https://cdn.sportmaster.ru/upload/content/mediahab/prod/a8dc0296-7b89-44ff-851a-332eb8f14121.jpg" alt="Виньяса">
+          <h3>Виньяса</h3>
+          <p>Динамичная практика, связка асан в потоке. Развивает выносливость.</p>
+        </div>
+        <div class="card">
+          <img src="https://s0.rbk.ru/v6_top_pics/media/img/5/38/755979522142385.jpg" alt="Растяжка">
+          <h3>Растяжка</h3>
+          <p>Мягкое и глубокое растяжение мышц, улучшение гибкости и осанки.</p>
+        </div>
+        <div class="card">
+          <img src="https://dvayoga.ru/d/yoga_nidra_2.png" alt="Йога-нидра">
+          <h3>Йога-нидра</h3>
+          <p>Глубокая релаксация и медитация для восстановления нервной системы.</p>
+        </div>
+        <div class="card">
+          <img src="https://static.tildacdn.com/tild3761-3861-4236-a639-343362346661/257936.jpg" alt="Пилатес">
+          <h3>Пилатес</h3>
+          <p>Укрепление мышц кора, развитие контроля над телом.</p>
+        </div>
+        <div class="card">
+          <img src="https://static.tildacdn.com/tild6131-6637-4431-b339-326166326137/-.jpg" alt="Дыхание">
+          <h3>Пранаяма</h3>
+          <p>Дыхательные техники для управления энергией и концентрацией.</p>
+        </div>
+        <div class="card">
+          <img src="https://static.tildacdn.com/tild3866-3830-4832-b565-373062303838/-.jpg" alt="Айенгара">
+          <h3>Айенгара</h3>
+          <p>Точная работа с выравниванием, использование пропсов. Для всех уровней.</p>
+        </div>
+        <div class="card">
+          <img src="https://www.kiz.ru/upload/medialibrary/09c/b6gjlip8pj46ho1g74evix5vkq4ko58j.jpg" alt="Кундалини">
+          <h3>Кундалини</h3>
+          <p>Энергетические практики, медитации и мантры для пробуждения сознания.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЦЕНЫ (10 абонементов) -->
+  <section class="section prices" id="prices">
+    <div class="container">
+      <h2>Наши цены</h2>
+      <div class="prices-grid">
+        <div class="price-card">
+          <h3>Разовое</h3>
+          <p class="price">800 ₽</p>
+          <p>Одно занятие</p>
+          <button class="btn-buy">Купить абонемент</button>
+        </div>
+        <div class="price-card">
+          <h3>5 занятий</h3>
+          <p class="price">3500 ₽</p>
+          <p>Абонемент на 5 занятий (срок 1 месяц)</p>
+          <button class="btn-buy">Купить абонемент</button>
+        </div>
+        <div class="price-card">
+          <h3>10 занятий</h3>
+          <p class="price">6500 ₽</p>
+          <p>Абонемент на 10 занятий (срок 2 месяца)</p>
+          <button class="btn-buy">Купить абонемент</button>
+        </div>
+        <div class="price-card">
+          <h3>20 занятий</h3>
+          <p class="price">12000 ₽</p>
+          <p>Абонемент на 20 занятий (срок 3 месяца)</p>
+          <button class="btn-buy">Купить абонемент</button>
+        </div>
+        <div class="price-card">
+          <h3>Безлимит месяц</h3>
+          <p class="price">9000 ₽</p>
+          <p>Неограниченное число занятий</p>
+          <button class="btn-buy">Купить абонемент</button>
+        </div>
+        <div class="price-card">
+          <h3>3 месяца</h3>
+          <p class="price">24000 ₽</p>
+          <p>Безлимит на 3 месяца</p>
+          <button class="btn-buy">Купить абонемент</button>
+        </div>
+        <div class="price-card">
+          <h3>Годовой</h3>
+          <p class="price">80000 ₽</p>
+          <p>Годовой безлимит</p>
+          <button class="btn-buy">Купить абонемент</button>
+        </div>
+        <div class="price-card">
+          <h3>Пробное</h3>
+          <p class="price">500 ₽</p>
+          <p>Пробное занятие для новичков</p>
+          <button class="btn-buy">Купить абонемент</button>
+        </div>
+        <div class="price-card">
+          <h3>Парный</h3>
+          <p class="price">1400 ₽</p>
+          <p>Занятие вдвоём (цена за двоих)</p>
+          <button class="btn-buy">Купить абонемент</button>
+        </div>
+        <div class="price-card">
+          <h3>Летний интенсив</h3>
+          <p class="price">15000 ₽</p>
+          <p>3 недели ежедневных практик (июнь)</p>
+          <button class="btn-buy">Купить абонемент</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ТРЕНЕРЫ (8 человек) -->
+  <section class="section trainers" id="trainers">
+    <div class="container">
+      <h2>Наши тренеры</h2>
+      <div class="trainers-grid">
+        <div class="trainer-card">
+          <img src="https://bro.sattva-centr.ru/wp-content/uploads/sites/3/2023/12/ivanova-682x1024-1.jpeg" alt="Анна">
+          <h3>Анна Иванова</h3>
+          <p>Стаж 8 лет. Сертифицированный инструктор по хатха-йоге и йога-терапии.</p>
+        </div>
+        <div class="trainer-card">
+          <img src="https://thb.tildacdn.com/tild6263-6361-4762-a239-313336393930/-/resize/504x/__191__1.jpg" alt="Елена">
+          <h3>Елена Смирнова</h3>
+          <p>Стаж 6 лет. Эксперт по растяжке и стретчингу, автор курса «Гибкое тело».</p>
+        </div>
+        <div class="trainer-card">
+          <img src="https://cdn.ruwiki.ru/ruwiki/files/thumb/8/8a/%D0%94%D0%BC%D0%B8%D1%82%D1%80%D0%B8%D0%B9_%D0%92%D0%BE%D0%BB%D0%BA%D0%BE%D0%B2_%D0%A1%D0%B0%D0%BC%D0%BE%D0%BB%D0%B5%D1%82_%D0%9F%D0%BB%D1%8E%D1%81.jpg/549px-%D0%94%D0%BC%D0%B8%D1%82%D1%80%D0%B8%D0%B9_%D0%92%D0%BE%D0%BB%D0%BA%D0%BE%D0%B2_%D0%A1%D0%B0%D0%BC%D0%BE%D0%BB%D0%B5%D1%82_%D0%9F%D0%BB%D1%8E%D1%81.jpg" alt="Дмитрий">
+          <h3>Дмитрий Волков</h3>
+          <p>Стаж 10 лет. Мастер виньяса-флоу, проводит семинары по динамической йоге.</p>
+        </div>
+        <div class="trainer-card">
+          <img src="https://petrogradec.ru/images/petrova_o2.jpg" alt="Ольга">
+          <h3>Ольга Петрова</h3>
+          <p>Стаж 5 лет. Специалист по йоге для беременных и восстановительным практикам.</p>
+        </div>
+        <div class="trainer-card">
+          <img src="https://static.tildacdn.com/tild3766-3038-4162-a231-373936386336/photo_2025-05-11_11-.jpg" alt="Игорь">
+          <h3>Игорь Морозов</h3>
+          <p>Стаж 7 лет. Преподаёт пранаяму и медитацию, ведёт йога-нидру.</p>
+        </div>
+        <div class="trainer-card">
+          <img src="https://proprofi.online/upload/000/u16/1/2/12e0f09b.jpg" alt="Мария">
+          <h3>Мария Соколова</h3>
+          <p>Стаж 4 года. Инструктор по пилатесу и миофасциальному релизу.</p>
+        </div>
+        <div class="trainer-card">
+          <img src="https://prodoctorov.ru/media/photo/moskva/doctorimage/833747/1231221-833747-fyodorov_square.jpg" alt="Алексей">
+          <h3>Алексей Фёдоров</h3>
+          <p>Стаж 9 лет. Специалист по йога-терапии и коррекции осанки.</p>
+        </div>
+        <div class="trainer-card">
+          <img src="https://static.tildacdn.biz/tild3261-6330-4063-b531-313135383433/DSC_2119.jpg" alt="Виктория">
+          <h3>Виктория Лебедева</h3>
+          <p>Стаж 6 лет. Преподаватель кундалини-йоги и женских практик.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ОНЛАЙН КОНСУЛЬТАЦИЯ -->
+  <section class="section consult" id="consult">
+    <div class="container">
+      <h2>Онлайн консультация</h2>
+      <div class="consult-wrapper">
+        <div class="consult-form">
+          <form id="consultForm">
+            <input type="text" placeholder="Ваше имя" required>
+            <input type="email" placeholder="Email" required>
+            <input type="tel" placeholder="Телефон" required>
+            <textarea placeholder="Сообщение (например, интересующее направление)" rows="5"></textarea>
+            <button type="submit" class="btn-submit">Отправить</button>
+          </form>
+        </div>
+        <div class="consult-image">
+          <img src="https://static.tildacdn.com/tild3837-3066-4562-b362-346266666334/female-hand-typing-o.jpg" alt="Онлайн консультация">
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!-- КОНТАКТЫ (текст слева, карта справа) -->
+<section class="section contacts" id="contacts">
+  <div class="container">
+    <h2>Контакты</h2>
+    <div class="contacts-wrapper">
+      <div class="contacts-info">
+        <p><i class="fas fa-map-marker-alt"></i> ул. Ленина, 15, Москва</p>
+        <p><i class="fas fa-phone"></i> +7 (999) 999-99-99</p>
+        <p><i class="fas fa-envelope"></i> yoga@asanastudio.ru</p>
+        <p><i class="fas fa-clock"></i> Ежедневно 9:00 – 22:00</p>
+        <div class="social">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-telegram"></i></a>
+          <a href="#"><i class="fab fa-whatsapp"></i></a>
+          <a href="#"><i class="fab fa-vk"></i></a>
+        </div>
+      </div>
+      <div class="contacts-map">
+        <iframe src="https://yandex.ru/map-widget/v1/?ll=37.235653%2C55.613712&mode=search&sll=47.886180%2C56.631600&sspn=0.170288%2C0.069917&text=ул.%20Ленина%2C%2015%2C%20Москва&z=13" width="100%" height="400" style="border:0;" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <footer class="footer">
+    <p>&copy; 2025 Asana Studio. Все права защищены.</p>
+  </footer>
+
+  <script>
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 10);
+    });
+
+    // Бургер-меню
+    const burger = document.getElementById('burger');
+    const navMenu = document.getElementById('navMenu');
+    burger.addEventListener('click', () => {
+      navMenu.classList.toggle('active');
+    });
+    document.querySelectorAll('.nav-menu a').forEach(link => {
+      link.addEventListener('click', () => navMenu.classList.remove('active'));
+    });
+
+    // Форма
+    document.getElementById('consultForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Спасибо! Мы свяжемся с вами в ближайшее время.');
+      this.reset();
+    });
+
+    // Кнопки "Купить абонемент"
+    document.querySelectorAll('.btn-buy').forEach(btn => {
+      btn.addEventListener('click', () => {
+        alert('Абонемент добавлен в корзину (демо-режим).');
+      });
+    });
+  </script>
+</body>
+</html>
